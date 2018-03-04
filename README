@@ -15,7 +15,7 @@ I'm just using Jetty, the server. Therefore:
 
 Gotchas:
 1. So, you can't run java -jar and also give it a classpath. So, I just built a fat jar    and just ran that.
-
+You can either use java -jar or java -cp, not both
 
 
 Notes:
