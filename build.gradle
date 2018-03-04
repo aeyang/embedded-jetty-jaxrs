@@ -1,0 +1,37 @@
+apply plugin: 'java'
+apply plugin: 'idea'
+apply plugin: 'war'
+
+repositories {
+  mavenCentral()
+}
+
+// You can either use java -jar or java -cp, not both.
+// So your earlier attempt of using 'java -jar' and also specifying the classpath does not work.
+// Solution: just build a fat jar so you don't have to specify classpath
+jar {
+  manifest {
+    attributes 'Main-Class' : 'example.RestServer'
+  }
+  from {
+    configurations.compile.collect { it.isDirectory() ? it : zipTree(it) }
+  }
+}
+
+task javaCommand << {
+  def classPath = sourceSets.main.runtimeClasspath.asPath
+  def jarLocation = 'build/libs/jaxrsExampleProject.jar'
+  def jettyServerJar = '/Users/alyang/.gradle/caches/modules-2/files-2.1/org.eclipse.jetty/jetty-server/9.4.8.v20171121/34614bd9a29de57ef28ca31f1f2b49a412af196d/jetty-server-9.4.8.v20171121.jar'
+
+  println "java -classpath ${classPath} -jar ${jarLocation}"
+}
+
+dependencies {
+    providedCompile 'javax:javaee-api:7.0'
+    compile group: 'org.glassfish.jersey.containers', name: 'jersey-container-servlet-core', version: '2.26'
+    compile group: 'org.glassfish.jersey.inject', name: 'jersey-hk2', version: '2.26'
+    compile group: 'org.eclipse.jetty', name: 'jetty-servlet', version: '9.4.8.v20171121'
+    //compile group: 'org.eclipse.jetty', name:'jetty-server', version:'9.4.8.v20171121'
+
+}
+
